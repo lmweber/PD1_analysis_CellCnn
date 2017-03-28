@@ -64,6 +64,7 @@ panel[marker_cols, ]
 
 # match columns using metal names (since .fcs columns are not in same order as in panels spreadsheet)
 marker_metals <- panel[marker_cols, ]$fcs_colname
+marker_names <- panel[marker_cols, ]$Antigen
 
 markers_ix <- match(marker_metals, pData(parameters(data[[1]]))$name)
 
@@ -77,7 +78,8 @@ cofactor <- 5
 data <- lapply(data, function(d) {
   e <- exprs(d)
   e[, markers_ix] <- asinh(e[, markers_ix] / cofactor)
-  exprs(d) <- e
+  colnames(e)[markers_ix] <- marker_names
+  e
 })
 
 
@@ -93,12 +95,17 @@ for (i in 1:length(data)) {
 # generate .csv files with input arguments for CellCnn (in required format)
 # -------------------------------------------------------------------------
 
-# data frame for .csv file containing sample names and conditions
-
 files_transf <- list.files("../data_transformed", full.names = TRUE)
 
-condition <- gsub("[0-9]+_transf\\.fcs$", "", gsub("^BASE_CK_2016-06-29-03all_null_", "", basename(files_transf)))
+
+# vector of condition IDs
+condition <- gsub("[0-9]+_transf\\.fcs$", "", 
+                  gsub("^BASE_CK_2016-06-2(3|9)(_|-)(03)(all_null_|_)", "", 
+                       basename(files_transf)))
 condition
+
+
+# create data frame of sample names and conditions (for CellCnn input .csv file)
 
 label <- as.numeric(as.factor(condition)) - 1
 label
@@ -108,10 +115,10 @@ df_samples <- data.frame(fcs_filename = basename(files_transf),
 df_samples
 
 
-# data frame for .csv file containing column names (metals)
+# create data frame of column names (markers) (for CellCnn input .csv file)
 
-df_metals <- t(data.frame(marker_metals))
-df_metals
+df_markers <- t(data.frame(marker_names))
+df_markers
 
 
 # save as .csv files
@@ -119,7 +126,7 @@ df_metals
 write.csv(df_samples, "../inputs/input_samples.csv", quote = FALSE, row.names = FALSE)
 
 # need to use 'write.table' to allow removing column names
-write.table(df_metals, "../inputs/input_markers.csv", sep = ",", quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(df_markers, "../inputs/input_markers.csv", sep = ",", quote = FALSE, row.names = FALSE, col.names = FALSE)
 
 
 
