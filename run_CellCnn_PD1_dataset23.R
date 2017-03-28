@@ -1,7 +1,10 @@
-###############################################################################
-# Script to run CellCnn on PD-1 melanoma skin cancer data set (Carsten Krieg) #
-# Lukas Weber, March 2017                                                     #
-###############################################################################
+####################################################################################
+# Script to run CellCnn on PD-1 melanoma skin cancer data set "23" (Carsten Krieg) #
+#                                                                                  #
+# note there are two data sets: referred to as "23" and "29"                       #
+#                                                                                  #
+# Lukas Weber, March 2017                                                          #
+####################################################################################
 
 
 # note: need to run from command line with 'Rscript <filename>.R'
@@ -15,6 +18,9 @@ library(readxl)
 # ----------------
 # load data into R
 # ----------------
+
+# data set "23"
+
 
 # load data from .fcs files
 files <- list.files("../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", 
@@ -39,13 +45,18 @@ panel
 # transform data and export .fcs files
 # ------------------------------------
 
+# including CD45
+
+
+# update 'panel' table to include CD45 in CellCnn analysis
+panel$transform[panel$fcs_colname == "Y89Di"] <- 1
+panel
+
 # marker columns (to tranform and use for CellCnn analysis)
 marker_cols <- as.logical(panel$transform)
 marker_cols
 
 panel[marker_cols, ]
-
-# NOTE: not including CD45
 
 
 # match columns using metal names (since .fcs columns are not in same order as in panels spreadsheet)

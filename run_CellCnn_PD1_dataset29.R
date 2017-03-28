@@ -1,7 +1,10 @@
-###############################################################################
-# Script to run CellCnn on PD-1 melanoma skin cancer data set (Carsten Krieg) #
-# Lukas Weber, March 2017                                                     #
-###############################################################################
+####################################################################################
+# Script to run CellCnn on PD-1 melanoma skin cancer data set "29" (Carsten Krieg) #
+#                                                                                  #
+# note there are two data sets: referred to as "23" and "29"                       #
+#                                                                                  #
+# Lukas Weber, March 2017                                                          #
+####################################################################################
 
 
 # note: need to run from command line with 'Rscript <filename>.R'
@@ -16,9 +19,12 @@ library(readxl)
 # load data into R
 # ----------------
 
+# data set "29"
+
+
 # load data from .fcs files
-files <- list.files("../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", 
-                    pattern = "^BASE_CK_2016-06-23_03_[NR]+[1-5]\\.fcs$", 
+files <- list.files("../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs", 
+                    pattern = "^BASE_CK_2016-06-29-03all_null_[NR]+[0-9]+\\.fcs$", 
                     full.names = TRUE)
 files
 
@@ -38,6 +44,9 @@ panel
 # ------------------------------------
 # transform data and export .fcs files
 # ------------------------------------
+
+# including CD45
+
 
 # update 'panel' table to include CD45 in CellCnn analysis
 panel$transform[panel$fcs_colname == "Y89Di"] <- 1
@@ -85,7 +94,7 @@ for (i in 1:length(data)) {
 
 files_transf <- list.files("../data_transformed", full.names = TRUE)
 
-condition <- gsub("[1-5]_transf\\.fcs$", "", gsub("^BASE_CK_2016-06-23_03_", "", basename(files_transf)))
+condition <- gsub("[0-9]+_transf\\.fcs$", "", gsub("^BASE_CK_2016-06-29-03all_null_", "", basename(files_transf)))
 condition
 
 label <- as.numeric(as.factor(condition)) - 1
