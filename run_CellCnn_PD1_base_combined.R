@@ -43,7 +43,7 @@ data <- lapply(files, read.FCS, transformation = FALSE, truncate_max_range = FAL
 # check column names (note: exclude columns 58 and 59, which contain "beadDist" and "Time")
 ix <- 1:57
 check_cols <- lapply(data, function(d) pData(parameters(d))$name)
-all(sapply(check_cols, function(ch) all(ch[ix]==check_cols[[1]][ix])))
+all(sapply(check_cols, function(ch) all(ch[ix] == check_cols[[1]][ix])))
 
 
 # load panel details from .xlsx spreadsheet

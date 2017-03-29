@@ -35,7 +35,7 @@ data <- lapply(files, read.FCS, transformation = FALSE, truncate_max_range = FAL
 
 # check column names
 check_cols <- lapply(data, function(d) pData(parameters(d))$name)
-sapply(check_cols, function(ch) all(ch==check_cols[[1]]))
+sapply(check_cols, function(ch) all(ch == check_cols[[1]]))
 
 
 # load panel details from .xlsx spreadsheet
