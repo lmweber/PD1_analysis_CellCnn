@@ -212,6 +212,25 @@ legend("topleft", legend = c("dataset base_23", "dataset base_29"),
 dev.off()
 
 
+# MDS plot: condition and batch
+
+cnd_bch <- paste(condition, batch, sep = "_")
+cnd_bch <- factor(cnd_bch, levels = unique(cnd_bch))
+cnd_bch
+
+pdf("../plots/MDS_plot_condition_batch.pdf", width = 7.5, height = 7.5)
+
+cols_cnd_bch <- as.character(factor(cnd_bch, labels = c("blue", "orange", "deepskyblue1", "red")))
+plotMDS(df_plot, top = 2000, col = cols_cnd_bch, 
+        main = "MDS plot: color by\ncondition (NR vs. R) and \nbatch (dataset base_23 vs. dataset base_29)")
+legend("topleft", pch = 16, 
+       legend = c("Non responder (NR), dataset base_23", "Responder (R), dataset base_23", 
+                  "Non responder (NR), dataset base_29", "Responder (R), dataset base_29"), 
+       col = c("blue", "orange", "deepskyblue1", "red"))
+
+dev.off()
+
+
 
 # -------------------------------
 # run CellCnn (from command line)
