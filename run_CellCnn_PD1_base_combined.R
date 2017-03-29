@@ -203,11 +203,11 @@ dev.off()
 
 pdf("../plots/MDS_plot_batch.pdf", width = 6.5, height = 6.5)
 
-cols_bch <- as.character(factor(batch, labels = c("green", "magenta")))
+cols_bch <- as.character(factor(batch, labels = c("deepskyblue1", "red")))
 plotMDS(df_plot, top = 2000, col = cols_bch, 
         main = "MDS plot: color by batch (dataset 23 vs. dataset 29)")
 legend("topleft", legend = c("dataset base_23", "dataset base_29"), 
-       col = c("green", "magenta"), pch = 16)
+       col = c("deepskyblue1", "red"), pch = 16)
 
 dev.off()
 
