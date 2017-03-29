@@ -212,7 +212,7 @@ legend("topleft", legend = c("dataset base_23", "dataset base_29"),
 dev.off()
 
 
-# MDS plot: condition and batch
+# MDS plot: color by condition and batch
 
 cnd_bch <- paste(condition, batch, sep = "_")
 cnd_bch <- factor(cnd_bch, levels = unique(cnd_bch))
