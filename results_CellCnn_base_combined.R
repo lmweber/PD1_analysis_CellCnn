@@ -125,36 +125,48 @@ t(sapply(data_markers, colnames))
 t(sapply(data_sel_markers, colnames))
 
 
-# calculate median marker expression by sample
+# calculate median marker expression (pooled cells)
 
-meds <- t(sapply(data_markers, function(d) {
-  apply(d, 2, median)
-}))
-
-meds_sel <- t(sapply(data_sel_markers, function(d) {
-  apply(d, 2, median)
-}))
-
-rownames(meds) <- samples
-rownames(meds_sel) <- samples
+meds <- apply(do.call(rbind, data_markers), 2, median)
+meds_sel <- apply(do.call(rbind, data_sel_markers), 2, median)
 
 meds
 meds_sel
 
 
-# calculate overall medians (median of sample medians; i.e. we are weighting samples equally)
-
-meds_group <- apply(meds, 2, median)
-meds_sel_group <- apply(meds_sel, 2, median)
-
-meds_group
-meds_sel_group
+# # alternatively: calculate median marker expression by sample (i.e. samples equally weighted)
+# 
+# meds <- t(sapply(data_markers, function(d) {
+#   apply(d, 2, median)
+# }))
+# 
+# meds_sel <- t(sapply(data_sel_markers, function(d) {
+#   apply(d, 2, median)
+# }))
+# 
+# rownames(meds) <- samples
+# rownames(meds_sel) <- samples
+# 
+# meds
+# meds_sel
+# 
+# 
+# # calculate overall medians (median of sample medians; i.e. we are weighting samples equally)
+# 
+# meds_group <- apply(meds, 2, median)
+# meds_sel_group <- apply(meds_sel, 2, median)
+# 
+# meds_group
+# meds_sel_group
 
 
 # heatmap
 
-meds_plot <- rbind(meds_group, meds_sel_group)
-rownames(meds_plot) <- c("all cells", "selected population")
+# meds_plot <- rbind(meds_group, meds_sel_group)
+# rownames(meds_plot) <- c("all cells", "selected population")
+
+meds_plot <- rbind(meds, meds_sel)
+rownames(meds_plot) <- c("all cells", "selected")
 
 pheatmap(meds_plot, 
          color = colorRampPalette(brewer.pal(7, "YlGnBu"))(100), 
