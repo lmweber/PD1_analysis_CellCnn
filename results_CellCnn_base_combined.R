@@ -1,12 +1,12 @@
-#######################################################################################
-# Script to calculate summary statistics and heatmap for results from previous script #
-# ("run_CellCnn_PD1_base_combined.R")                                                 #
-#                                                                                     #
-# Lukas Weber, March 2017                                                             #
-#######################################################################################
+#########################################################################################
+# Script to calculate summary statistics, statistical test, heatmap (using results from #
+# previous script: "run_CellCnn_PD1_base_combined.R")                                   #
+#                                                                                       #
+# Lukas April, April 2017                                                               #
+#########################################################################################
 
 
-# note: run previous script 'run_CellCnn_PD1_base_combined.R' to get the following
+# note: run previous script 'run_CellCnn_PD1_base_combined.R' to get the following 
 # vectors: 'samples', 'condition', 'markers_ix'
 
 

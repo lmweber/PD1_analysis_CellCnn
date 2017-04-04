@@ -1,13 +1,12 @@
-###################################################################################
-# Script to run CellCnn: PD-1 melanoma skin cancer data set (collaboration with   #
-# Carsten Krieg)                                                                  #
-#                                                                                 #
-# data set: "baseline data sets 23 and 29 (combined)"                             #
-#                                                                                 #
-# note there are two data sets: referred to as "baseline" data sets "23" and "29" #
-#                                                                                 #
-# Lukas Weber, March 2017                                                         #
-###################################################################################
+##############################################################################
+# Script to run CellCnn                                                      #
+#                                                                            #
+# PD-1 melanoma skin cancer data set (collaboration with Carsten Krieg, UZH) #
+#                                                                            #
+# data set: "baseline data sets 23 and 29 (combined)"                        #
+#                                                                            #
+# Lukas Weber, April 2017                                                    #
+##############################################################################
 
 
 # note: need to run from command line with 'Rscript <filename>.R'
@@ -239,8 +238,11 @@ dev.off()
 # for installation instructions and examples see: https://github.com/eiriniar/CellCnn
 
 
+DIR_CellCnn <- "../../../../CyTOF_differential/CellCnn/CellCnn/"
+
+
 # run main analysis
-cmd <- paste("python ../../CellCnn/cellCnn/run_analysis.py", 
+cmd <- paste("python", "DIR_CellCnn", "cellCnn/run_analysis.py", 
              "-f ../inputs/input_samples.csv", 
              "-m ../inputs/input_markers.csv", 
              "-i ../data_transformed/", 
@@ -260,7 +262,7 @@ sink()
 
 
 # export selected cells
-cmd <- paste("python ../../CellCnn/cellCnn/run_analysis.py", 
+cmd <- paste("python", "DIR_CellCnn", "cellCnn/run_analysis.py", 
              "-f ../inputs/input_samples.csv", 
              "-m ../inputs/input_markers.csv", 
              "-i ../data_transformed/", 
