@@ -242,7 +242,7 @@ DIR_CellCnn <- "../../../../CyTOF_differential/CellCnn/CellCnn/"
 
 
 # run main analysis
-cmd <- paste("python", "DIR_CellCnn", "cellCnn/run_analysis.py", 
+cmd <- paste("python", DIR_CellCnn, "cellCnn/run_analysis.py", 
              "-f ../inputs/input_samples.csv", 
              "-m ../inputs/input_markers.csv", 
              "-i ../data_transformed/", 
@@ -262,7 +262,7 @@ sink()
 
 
 # export selected cells
-cmd <- paste("python", "DIR_CellCnn", "cellCnn/run_analysis.py", 
+cmd <- paste("python", DIR_CellCnn, "cellCnn/run_analysis.py", 
              "-f ../inputs/input_samples.csv", 
              "-m ../inputs/input_markers.csv", 
              "-i ../data_transformed/", 
