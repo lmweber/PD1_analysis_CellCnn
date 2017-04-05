@@ -88,6 +88,8 @@ sink()
 # ---------------------------------------------------------------
 
 # define model formula
+# (using observation-level random effects model to account for overdispersion, i.e. random
+# intercept term for each sample; see Harrison (2015): https://peerj.com/articles/1114/)
 formula_glmer <- proportion ~ condition + (1|sample)
 
 
