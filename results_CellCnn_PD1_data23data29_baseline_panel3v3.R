@@ -1,13 +1,16 @@
-#########################################################################################
-# Script to calculate summary statistics, statistical test, heatmap (using results from #
-# previous script: "run_CellCnn_PD1_base_combined.R")                                   #
-#                                                                                       #
-# Lukas April, April 2017                                                               #
-#########################################################################################
+##########################################################################################
+# Script to analyze results: calculate summary statistics, calculate statistical test, 
+# generate heatmap
+# 
+# results from previous script: "run_CellCnn_PD1_data23data29_baseline_panel3v3.R"
+# 
+# Lukas Weber, June 2017
+##########################################################################################
 
 
-# note: run previous script 'run_CellCnn_PD1_base_combined.R' to get the following 
-# vectors: 'samples', 'condition', 'markers_ix'
+# note: run first parts of the previous script 
+# 'run_CellCnn_PD1_data23data29_baseline_panel3v3.R' to get the following vectors: 
+# 'samples', 'condition', 'markers_ix', 'files_transf'
 
 
 library(dplyr)
@@ -23,13 +26,17 @@ library(RColorBrewer)
 # load results for selected filter/population
 # -------------------------------------------
 
-files_sel <- list.files("../out_CellCnn/selected_cells", pattern = "\\.csv$", full.names = TRUE)
+# data: "data 23" and "data 29" (combined), baseline only, Non-Responders vs. Responders
+dataset <- "data23data29_baseline_panel3v3"
+
+files_sel <- gsub("_transf\\.fcs$", "_transf_selected_cells.csv", files_transf)
+
+fn_sel <- paste0("../out_CellCnn/", dataset, "/selected_cells/", files_sel)
 
 # check files are in same order as previously
-samples
-files_sel
+data.frame(fn_sel, samples)
 
-res_sel <- lapply(files_sel, read.csv)
+res_sel <- lapply(fn_sel, read.csv)
 
 
 
@@ -73,11 +80,11 @@ res_cond
 
 
 # save results
-sink("../results/summary_statistics_selected_filter_by_sample.txt")
+sink(paste0("../results/", dataset, "/summary_statistics_selected_filter_by_sample.txt"))
 res
 sink()
 
-sink("../results/summary_statistics_selected_filter_by_group.txt")
+sink(paste0("../results/", dataset, "/summary_statistics_selected_filter_by_group.txt"))
 t(res_cond)
 sink()
 
@@ -115,7 +122,7 @@ p_val
 
 
 # save results
-sink("../results/mixed_model_test_results.txt")
+sink(paste0("../results/", dataset, "/mixed_model_test_results.txt"))
 summary(hyp)
 sink()
 
@@ -134,16 +141,16 @@ ix_sel
 
 
 # load transformed data files and subset cells
-files_transf <- list.files("../data_transformed", full.names = TRUE)
+fn_transf <- paste0("../data_transformed/", dataset, "/", files_transf)
 
-data <- lapply(files_transf, function(f) {
+data <- lapply(fn_transf, function(f) {
   exprs(read.FCS(f, transformation = FALSE, truncate_max_range = FALSE))
 })
 
 data_sel <- mapply(function(f, ix) {
   d <- exprs(read.FCS(f, transformation = FALSE, truncate_max_range = FALSE))
   d_sel <- d[ix, , drop = FALSE]
-}, files_transf, ix_sel)
+}, fn_transf, ix_sel)
 
 
 # marker columns only
@@ -204,7 +211,7 @@ pheatmap(meds_plot,
          color = colorRampPalette(brewer.pal(7, "YlGnBu"))(100), 
          cluster_rows = FALSE, cluster_cols = FALSE, 
          main = "Median (transformed) marker expression: all cells vs. selected population", 
-         filename = "../plots/heatmap_marker_exp.pdf", 
+         filename = paste0("../plots/", dataset, "/heatmap_marker_exp.pdf"), 
          width = 12, height = 2.5)
 
 

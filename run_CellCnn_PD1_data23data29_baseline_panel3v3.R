@@ -1,12 +1,14 @@
-##############################################################################
-# Script to run CellCnn                                                      #
-#                                                                            #
-# PD-1 melanoma skin cancer data set (collaboration with Carsten Krieg, UZH) #
-#                                                                            #
-# data set: "baseline data sets 23 and 29 (combined)"                        #
-#                                                                            #
-# Lukas Weber, April 2017                                                    #
-##############################################################################
+##########################################################################################
+# Script to run CellCnn
+# 
+# Anti-PD-1 melanoma skin cancer data set
+# (collaboration with Carsten Krieg and Malgorzata Nowicka, UZH)
+# 
+# - data: "data 23" and "data 29" (combined), baseline only, Non-Responders vs. Responders
+# - panel: "panel3_v3.xlsx"
+# 
+# Lukas Weber, June 2017
+##########################################################################################
 
 
 # note: need to run from command line with 'Rscript <filename>.R'
@@ -19,25 +21,61 @@ library(limma)
 
 
 
+# -------------
+# load metadata
+# -------------
+
+dataset <- "data23data29_baseline_panel3v3"
+
+
+# load metadata spreadsheets for each data set ("data 23" and "data 29")
+metadata_23 <- read_excel("../data/PD-1 project/CK_metadata/metadata_23_03all.xlsx")
+metadata_29 <- read_excel("../data/PD-1 project/CK_metadata/metadata_29_03all3.xlsx")
+
+#View(metadata_23)
+#View(metadata_29)
+
+
+# paths
+paths <- c(rep("../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", length(metadata_23$condition[6:15])), 
+           rep("../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs", length(metadata_29$condition[6:15])))
+
+
+# filenames
+files <- c(metadata_23$filename[6:15], metadata_29$filename[6:15])
+
+
+# vector of condition IDs
+condition <- gsub("^base_", "", 
+                  c(metadata_23$condition[6:15], metadata_29$condition[6:15]))
+condition
+
+# vector of sample IDs
+samples <- gsub("^base_", "", 
+                c(metadata_23$shortname[6:15], metadata_29$shortname[6:15]))
+samples
+
+# vector of batch (data set) IDs
+batch <- c(rep("23", length(metadata_23$condition[6:15])), 
+           rep("29", length(metadata_29$condition[6:15])))
+batch
+
+
+# check
+data.frame(paths, files, condition, samples, batch)
+
+
+
 # ----------------
 # load data into R
 # ----------------
 
-# data set: "baseline data sets 23 and 29 (combined)"
-
-
 # load data from .fcs files
-files_base23 <- list.files("../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", 
-                           pattern = "^BASE_CK_2016-06-23_03_[NR]+[1-5]\\.fcs$", 
-                           full.names = TRUE)
-files_base29 <- list.files("../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs", 
-                           pattern = "^BASE_CK_2016-06-29-03all_null_[NR]+[0-9]+\\.fcs$", 
-                           full.names = TRUE)
+fn <- paste(paths, files, sep = "/")
+fn
 
-files <- c(files_base23, files_base29)
-files
+data <- lapply(fn, read.FCS, transformation = FALSE, truncate_max_range = FALSE)
 
-data <- lapply(files, read.FCS, transformation = FALSE, truncate_max_range = FALSE)
 
 # check column names (note: exclude columns 58 and 59, which contain "beadDist" and "Time")
 ix <- 1:57
@@ -92,7 +130,8 @@ data <- lapply(data, function(d) {
 
 # export transformed data
 for (i in 1:length(data)) {
-  filename <- paste0("../data_transformed/", gsub("\\.fcs$", "", basename(files[i])), "_transf.fcs")
+  filename <- paste0("../data_transformed/", dataset, "/", 
+                     gsub("\\.fcs$", "_transf.fcs", files[i]))
   write.FCS(flowFrame(data[[i]]), filename)
 }
 
@@ -102,26 +141,7 @@ for (i in 1:length(data)) {
 # generate .csv files with input arguments for CellCnn (in required format)
 # -------------------------------------------------------------------------
 
-files_transf <- list.files("../data_transformed", full.names = TRUE)
-
-
-# vector of condition IDs
-condition <- gsub("[0-9]+_transf\\.fcs$", "", 
-                  gsub("^BASE_CK_2016-06-2(3|9)(_|-)(03)(all_null_|_)", "", 
-                       basename(files_transf)))
-condition
-
-# vector of batch (data set) IDs
-batch <- gsub("(_|-)03(all_null_|_)(NR|R)[0-9]+_transf\\.fcs$", "", 
-              gsub("^BASE_CK_2016-06-", "", 
-                   basename(files_transf)))
-batch
-
-# vector of sample IDs
-samples <- gsub("_transf\\.fcs$", "", 
-                gsub("^BASE_CK_2016-06-2(3|9)(_|-)(03)(all_null_|_)", "", 
-                     basename(files_transf)))
-samples
+files_transf <- gsub("\\.fcs$", "_transf.fcs", files)
 
 
 # create data frame of sample names and conditions (for CellCnn input .csv file)
@@ -129,9 +149,11 @@ samples
 label <- as.numeric(as.factor(condition)) - 1
 label
 
-df_samples <- data.frame(fcs_filename = basename(files_transf), 
-                         label = label)
+df_samples <- data.frame(fcs_filename = files_transf, label = label)
 df_samples
+
+# arrange alphabetically (otherwise CellCnn reads input files in incorrect order)
+df_samples <- df_samples[order(df_samples$fcs_filename), ]
 
 
 # create data frame of column names (markers) (for CellCnn input .csv file)
@@ -142,10 +164,12 @@ df_markers
 
 # save as .csv files
 
-write.csv(df_samples, "../inputs/input_samples.csv", quote = FALSE, row.names = FALSE)
+write.csv(df_samples, paste0("../inputs/", dataset, "/input_samples.csv"), 
+          quote = FALSE, row.names = FALSE)
 
 # need to use 'write.table' to allow removing column names
-write.table(df_markers, "../inputs/input_markers.csv", sep = ",", quote = FALSE, row.names = FALSE, col.names = FALSE)
+write.table(df_markers, paste0("../inputs/", dataset, "/input_markers.csv"), 
+            sep = ",", quote = FALSE, row.names = FALSE, col.names = FALSE)
 
 
 
@@ -187,7 +211,7 @@ colnames(df_plot) <- df_meds$sample
 
 # MDS plot: color by condition
 
-pdf("../plots/MDS_plot_condition.pdf", width = 6.5, height = 6.5)
+pdf(paste0("../plots/", dataset, "/MDS_plot_condition.pdf"), width = 6.5, height = 6.5)
 
 cols_cnd <- as.character(factor(condition, labels = c("blue", "orange")))
 plotMDS(df_plot, top = 2000, col = cols_cnd, 
@@ -200,7 +224,7 @@ dev.off()
 
 # MDS plot: color by batch
 
-pdf("../plots/MDS_plot_batch.pdf", width = 6.5, height = 6.5)
+pdf(paste0("../plots/", dataset, "/MDS_plot_batch.pdf"), width = 6.5, height = 6.5)
 
 cols_bch <- as.character(factor(batch, labels = c("deepskyblue1", "red")))
 plotMDS(df_plot, top = 2000, col = cols_bch, 
@@ -217,7 +241,7 @@ cnd_bch <- paste(condition, batch, sep = "_")
 cnd_bch <- factor(cnd_bch, levels = unique(cnd_bch))
 cnd_bch
 
-pdf("../plots/MDS_plot_condition_batch.pdf", width = 7.5, height = 7.5)
+pdf(paste0("../plots/", dataset, "/MDS_plot_condition_batch.pdf"), width = 7.5, height = 7.5)
 
 cols_cnd_bch <- as.character(factor(cnd_bch, labels = c("blue", "orange", "deepskyblue1", "red")))
 plotMDS(df_plot, top = 2000, col = cols_cnd_bch, 
@@ -238,15 +262,15 @@ dev.off()
 # for installation instructions and examples see: https://github.com/eiriniar/CellCnn
 
 
-DIR_CellCnn <- "../../../../CyTOF_differential/CellCnn/CellCnn/"
+DIR_CellCnn <- "../../../../CyTOF/differential/CellCnn/CellCnn/"
 
 
 # run main analysis
 cmd <- paste("python", paste0(DIR_CellCnn, "cellCnn/run_analysis.py"), 
-             "-f ../inputs/input_samples.csv", 
-             "-m ../inputs/input_markers.csv", 
-             "-i ../data_transformed/", 
-             "-o ../out_CellCnn", 
+             paste0("-f ../inputs/", dataset, "/input_samples.csv"), 
+             paste0("-m ../inputs/", dataset, "/input_markers.csv"), 
+             paste0("-i ../data_transformed/", dataset, "/"), 
+             paste0("-o ../out_CellCnn/", dataset, "/"), 
              "--max_epochs 15 --nrun 10 --train_perc 0.6 --ncell_pooled 5 10 --plot --export_csv", 
              "--group_a NR --group_b R")
 
@@ -256,17 +280,17 @@ runtime_main <- system.time(
 
 runtime_main
 
-sink("../runtime/runtime_main.txt")
+sink(paste0("../runtime/", dataset, "/runtime_main.txt"))
 runtime_main
 sink()
 
 
 # export selected cells
 cmd <- paste("python", paste0(DIR_CellCnn, "cellCnn/run_analysis.py"), 
-             "-f ../inputs/input_samples.csv", 
-             "-m ../inputs/input_markers.csv", 
-             "-i ../data_transformed/", 
-             "-o ../out_CellCnn", 
+             paste0("-f ../inputs/", dataset, "/input_samples.csv"), 
+             paste0("-m ../inputs/", dataset, "/input_markers.csv"), 
+             paste0("-i ../data_transformed/", dataset, "/"), 
+             paste0("-o ../out_CellCnn/", dataset, "/"), 
              "--plot", 
              "--group_a NR --group_b R", 
              "--filter_response_thres 0.3 --load_results --export_selected_cells")
@@ -277,7 +301,7 @@ runtime_select <- system.time(
 
 runtime_select
 
-sink("../runtime/runtime_select.txt")
+sink(paste0("../runtime/", dataset, "/runtime_select.txt"))
 runtime_select
 sink()
 
