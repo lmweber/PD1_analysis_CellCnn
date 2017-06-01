@@ -5,7 +5,7 @@
 # (collaboration with Carsten Krieg and Malgorzata Nowicka, UZH)
 # 
 # - data: "data 23" and "data 29" (combined), baseline only, Non-Responders vs. Responders
-# - panel: "panel3_v3.xlsx"
+# - panel: "panel1.xlsx"
 # 
 # Lukas Weber, June 2017
 ##########################################################################################
@@ -25,20 +25,20 @@ library(limma)
 # load metadata
 # -------------
 
-dataset <- "data23data29_baseline_panel3v3"
+dataset <- "data23data29_baseline_panel1"
 
 
 # load metadata spreadsheets for each data set ("data 23" and "data 29")
-metadata_23 <- read_excel("../data/PD-1 project/CK_metadata/metadata_23_03all.xlsx")
-metadata_29 <- read_excel("../data/PD-1 project/CK_metadata/metadata_29_03all3.xlsx")
+metadata_23 <- read_excel("../data/PD-1 project/CK_metadata/metadata_23_01.xlsx")
+metadata_29 <- read_excel("../data/PD-1 project/CK_metadata/metadata_29_01.xlsx")
 
 #View(metadata_23)
 #View(metadata_29)
 
 
 # paths
-paths <- c(rep("../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", length(6:15)), 
-           rep("../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs", length(6:15)))
+paths <- c(rep("../data/PD-1 project/CK_2016-06-23_01/010_cleanfcs", length(6:15)), 
+           rep("../data/PD-1 project/CK_2016-06-29_01/010_cleanfcs", length(6:15)))
 
 
 # filenames
@@ -74,14 +74,22 @@ fn
 data <- lapply(fn, read.FCS, transformation = FALSE, truncate_max_range = FALSE)
 
 
-# check column names (note: exclude columns 58 and 59, which contain "beadDist" and "Time")
-ix <- 1:57
+# align column names
+# - remove "SampleID" and "Time" (columns 45 and 59) from data23
+# - remove "beadDist" and "Time" (columns 58 and 59) from data29
+ix_remove <- c(rep(list(c(45, 59)), sum(batch == "23")), rep(list(c(58, 59)), sum(batch == "29")))
+data <- mapply(function(d, ix) {
+  d[, -ix]
+}, data, ix_remove)
+
+
+# check column names
 check_cols <- lapply(data, function(d) pData(parameters(d))$name)
-all(sapply(check_cols, function(ch) all(ch[ix] == check_cols[[1]][ix])))
+all(sapply(check_cols, function(ch) all(ch == check_cols[[1]])))
 
 
 # load panel details from .xlsx spreadsheet
-panel <- read_excel("../data/PD-1 project/CK_panels/panel3_v3.xlsx")
+panel <- read_excel("../data/PD-1 project/CK_panels/panel1.xlsx")
 panel
 
 
@@ -214,7 +222,7 @@ pdf(paste0("../plots/", dataset, "/MDS_plot_condition.pdf"), width = 6.5, height
 cols_cnd <- as.character(factor(condition, labels = c("blue", "orange")))
 plotMDS(df_plot, top = 2000, col = cols_cnd, 
         main = "MDS plot: color by condition (NR vs. R)")
-legend("topleft", legend = c("Non responder (NR)", "Responder (R)"), 
+legend("topright", legend = c("Non responder (NR)", "Responder (R)"), 
        col = c("blue", "orange"), pch = 16)
 
 dev.off()
@@ -227,7 +235,7 @@ pdf(paste0("../plots/", dataset, "/MDS_plot_batch.pdf"), width = 6.5, height = 6
 cols_bch <- as.character(factor(batch, labels = c("deepskyblue1", "red")))
 plotMDS(df_plot, top = 2000, col = cols_bch, 
         main = "MDS plot: color by batch (dataset 23 vs. dataset 29)")
-legend("topleft", legend = c("dataset base_23", "dataset base_29"), 
+legend("topright", legend = c("dataset base_23", "dataset base_29"), 
        col = c("deepskyblue1", "red"), pch = 16)
 
 dev.off()
@@ -244,7 +252,7 @@ pdf(paste0("../plots/", dataset, "/MDS_plot_condition_batch.pdf"), width = 7.5, 
 cols_cnd_bch <- as.character(factor(cnd_bch, labels = c("blue", "orange", "deepskyblue1", "red")))
 plotMDS(df_plot, top = 2000, col = cols_cnd_bch, 
         main = "MDS plot: color by\ncondition (NR vs. R) and \nbatch (dataset base_23 vs. dataset base_29)")
-legend("topleft", pch = 16, 
+legend("topright", pch = 16, 
        legend = c("Non responder (NR), dataset base_23", "Responder (R), dataset base_23", 
                   "Non responder (NR), dataset base_29", "Responder (R), dataset base_29"), 
        col = c("blue", "orange", "deepskyblue1", "red"))
