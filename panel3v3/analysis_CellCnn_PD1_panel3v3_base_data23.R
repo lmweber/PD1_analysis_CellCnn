@@ -14,7 +14,7 @@
 ##########################################################################################
 
 
-# this script: both batches ("data 23" and "data 29") combined
+# this script: batch "data 23" only
 
 
 
@@ -34,7 +34,7 @@ library(RColorBrewer)
 # load metadata
 ###############
 
-dataset <- "panel3v3_base_combined"
+dataset <- "panel3v3_base_data23"
 
 
 # load metadata spreadsheets for each data set ("data 23" and "data 29")
@@ -192,9 +192,20 @@ dev.off()
 
 
 
-###############################
-# export transformed data files
-###############################
+#################################################
+# subset for batch; export transformed data files
+#################################################
+
+batch_name <- "23"
+
+is_batch <- batch == batch_name
+
+
+files <- files[is_batch]
+data <- data[is_batch]
+condition <- condition[is_batch]
+samples <- samples[is_batch]
+
 
 for (i in 1:length(data)) {
   filename <- paste0("../../data_transformed/", dataset, "/", 
