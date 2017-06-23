@@ -5,7 +5,7 @@
 # Anti-PD-1 melanoma skin cancer data set (collaboration with Carsten Krieg and Malgorzata
 # Nowicka, UZH)
 # 
-# - panel: "panel2.xlsx"
+# - panel: "panel1.xlsx"
 # - data: batches "data 23" and "data 29", baseline, Non-Responders vs. Responders
 # 
 # Note: run from command line with 'Rscript <filename>.R'
@@ -14,7 +14,7 @@
 ##########################################################################################
 
 
-# this script: batch "data 29" only
+# this script: batch "data 23" only
 
 
 library(flowCore)
@@ -32,17 +32,17 @@ library(RColorBrewer)
 # inputs
 ########
 
-dataset <- "panel2_base_data29"
+dataset <- "panel1_CD4_Tcells_base_data23"
 
-fn_metadata_23 <- "../../data/PD-1 project/CK_metadata/metadata_23_02.xlsx"
-fn_metadata_29 <- "../../data/PD-1 project/CK_metadata/metadata_29_02.xlsx"
+fn_metadata_23 <- "../../data/PD-1 project/CK_metadata/metadata_23_01.xlsx"
+fn_metadata_29 <- "../../data/PD-1 project/CK_metadata/metadata_29_01.xlsx"
 
-path_23 <- "../../data/PD-1 project/CK_2016-06-23_02/010_cleanfcs"
-path_29 <- "../../data/PD-1 project/CK_2016-06-29_02/010_cleanfcs"
+path_23 <- "../../data/PD-1 project/CK_2016-06-23_01_CD4_mergingNEW2/010_cleanfcs"
+path_29 <- "../../data/PD-1 project/CK_2016-06-29_01_CD4_merging2/010_cleanfcs"
 
-fn_panel <- "../../data/PD-1 project/CK_panels/panel2.xlsx"
+fn_panel <- "../../data/PD-1 project/CK_panels/panel1CD4.xlsx"
 
-batch_name <- "29"
+batch_name <- "23"
 
 
 
@@ -98,12 +98,12 @@ data <- lapply(fn, read.FCS, transformation = FALSE, truncate_max_range = FALSE)
 
 
 # align column names
-# - remove "SampleID" and "beadDist" (columns 45 and 59) from data29
-ix_remove_samples <- c(rep(FALSE, sum(batch == "23")), rep(TRUE, sum(batch == "29")))
-ix_remove_cols <- rep(list(c(45, 59)), sum(batch == "29"))
-data[ix_remove_samples] <- mapply(function(d, ix) {
+# - remove "SampleID" and "Time" (columns 45 and 59) from data23
+# - remove "beadDist" and "Time" (columns 58 and 59) from data29
+ix_remove <- c(rep(list(c(45, 59)), sum(batch == "23")), rep(list(c(58, 59)), sum(batch == "29")))
+data <- mapply(function(d, ix) {
   d[, -ix]
-}, data[ix_remove_samples], ix_remove_cols)
+}, data, ix_remove)
 
 
 # check column names

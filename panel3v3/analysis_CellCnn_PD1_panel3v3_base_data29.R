@@ -17,7 +17,6 @@
 # this script: batch "data 29" only
 
 
-
 library(flowCore)
 library(readxl)
 library(dplyr)
@@ -29,17 +28,31 @@ library(RColorBrewer)
 
 
 
+########
+# inputs
+########
+
+dataset <- "panel3v3_base_data29"
+
+fn_metadata_23 <- "../../data/PD-1 project/CK_metadata/metadata_23_03all.xlsx"
+fn_metadata_29 <- "../../data/PD-1 project/CK_metadata/metadata_29_03all3.xlsx"
+
+path_23 <- "../../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs"
+path_29 <- "../../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs"
+
+fn_panel <- "../../data/PD-1 project/CK_panels/panel3_v3.xlsx"
+
+batch_name <- "29"
+
+
 
 ###############
 # load metadata
 ###############
 
-dataset <- "panel3v3_base_data29"
-
-
 # load metadata spreadsheets for each data set ("data 23" and "data 29")
-metadata_23 <- read_excel("../../data/PD-1 project/CK_metadata/metadata_23_03all.xlsx")
-metadata_29 <- read_excel("../../data/PD-1 project/CK_metadata/metadata_29_03all3.xlsx")
+metadata_23 <- read_excel(fn_metadata_23)
+metadata_29 <- read_excel(fn_metadata_29)
 
 #View(metadata_23)
 #View(metadata_29)
@@ -48,8 +61,7 @@ ix_keep <- 6:15
 
 
 # paths
-paths <- c(rep("../../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", length(ix_keep)), 
-           rep("../../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs", length(ix_keep)))
+paths <- c(rep(path_23, length(ix_keep)), rep(path_29, length(ix_keep)))
 
 
 # filenames
@@ -92,7 +104,7 @@ all(sapply(check_cols, function(ch) all(ch[ix] == check_cols[[1]][ix])))
 
 
 # load panel details from .xlsx spreadsheet
-panel <- read_excel("../../data/PD-1 project/CK_panels/panel3_v3.xlsx")
+panel <- read_excel(fn_panel)
 panel
 
 
@@ -198,10 +210,7 @@ dev.off()
 # subset for batch; export transformed data files
 #################################################
 
-batch_name <- "29"
-
 is_batch <- batch == batch_name
-
 
 files <- files[is_batch]
 data <- data[is_batch]
