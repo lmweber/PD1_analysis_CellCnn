@@ -44,26 +44,28 @@ metadata_29 <- read_excel("../../data/PD-1 project/CK_metadata/metadata_29_03all
 #View(metadata_23)
 #View(metadata_29)
 
+ix_keep <- 6:15
+
 
 # paths
-paths <- c(rep("../../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", length(6:15)), 
-           rep("../../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs", length(6:15)))
+paths <- c(rep("../../data/PD-1 project/CK_2016-06-23_03all/010_cleanfcs", length(ix_keep)), 
+           rep("../../data/PD-1 project/CK_2016-06-29_03all3/010_cleanfcs", length(ix_keep)))
 
 
 # filenames
-files <- c(metadata_23$filename[6:15], metadata_29$filename[6:15])
+files <- c(metadata_23$filename[ix_keep], metadata_29$filename[ix_keep])
 
 
 # vector of condition IDs
-condition <- gsub("^base_", "", c(metadata_23$condition[6:15], metadata_29$condition[6:15]))
+condition <- gsub("^base_", "", c(metadata_23$condition[ix_keep], metadata_29$condition[ix_keep]))
 condition
 
 # vector of sample IDs
-samples <- gsub("^base_", "", c(metadata_23$shortname[6:15], metadata_29$shortname[6:15]))
+samples <- gsub("^base_", "", c(metadata_23$shortname[ix_keep], metadata_29$shortname[ix_keep]))
 samples
 
 # vector of batch (data set) IDs
-batch <- c(rep("23", length(6:15)), rep("29", length(6:15)))
+batch <- c(rep("23", length(ix_keep)), rep("29", length(ix_keep)))
 batch
 
 
