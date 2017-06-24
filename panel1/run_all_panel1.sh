@@ -1,0 +1,13 @@
+# Shell script to run all R scripts for 'panel 1'
+
+Rscript analysis_CellCnn_PD1_panel1_base_combined.R
+Rscript analysis_CellCnn_PD1_panel1_base_data23.R
+Rscript analysis_CellCnn_PD1_panel1_base_data29.R
+
+Rscript analysis_CellCnn_PD1_panel1_CD4_Tcells_base_combined.R
+Rscript analysis_CellCnn_PD1_panel1_CD4_Tcells_base_data23.R
+Rscript analysis_CellCnn_PD1_panel1_CD4_Tcells_base_data29.R
+
+Rscript analysis_CellCnn_PD1_panel1_CD8_Tcells_base_combined.R
+Rscript analysis_CellCnn_PD1_panel1_CD8_Tcells_base_data23.R
+Rscript analysis_CellCnn_PD1_panel1_CD8_Tcells_base_data29.R
