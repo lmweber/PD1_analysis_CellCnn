@@ -32,7 +32,7 @@ library(RColorBrewer)
 # inputs
 ########
 
-dataset <- "panel2_CD8_Tcells_base_combined"
+dataset <- "panel2_CD8_Tcells_base_data29"
 
 fn_metadata_23 <- "../../data/PD-1 project/CK_metadata/metadata_23_02.xlsx"
 fn_metadata_29 <- "../../data/PD-1 project/CK_metadata/metadata_29_02.xlsx"
