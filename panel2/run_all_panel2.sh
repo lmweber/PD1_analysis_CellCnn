@@ -1,5 +1,7 @@
 # Shell script to run all R scripts for 'panel 2'
 
+# main analyses
+
 Rscript analysis_CellCnn_PD1_panel2_base_combined.R
 Rscript analysis_CellCnn_PD1_panel2_base_data23.R
 Rscript analysis_CellCnn_PD1_panel2_base_data29.R
@@ -11,3 +13,19 @@ Rscript analysis_CellCnn_PD1_panel2_CD4_Tcells_base_data29.R
 Rscript analysis_CellCnn_PD1_panel2_CD8_Tcells_base_combined.R
 Rscript analysis_CellCnn_PD1_panel2_CD8_Tcells_base_data23.R
 Rscript analysis_CellCnn_PD1_panel2_CD8_Tcells_base_data29.R
+
+# cytokine expressing memory T cells
+
+Rscript analysis_CellCnn_PD1_panel2_CD4_Tmem_cells_base_combined.R
+Rscript analysis_CellCnn_PD1_panel2_CD8_Tmem_cells_base_combined.R
+
+Rscript analysis_CellCnn_PD1_panel2_CD4_Tmem_cells_treated_combined.R
+Rscript analysis_CellCnn_PD1_panel2_CD8_Tmem_cells_treated_combined.R
+
+# cytokine expressing memory T cells: separate batches
+
+Rscript analysis_CellCnn_PD1_panel2_CD4_Tmem_cells_treated_data23.R
+Rscript analysis_CellCnn_PD1_panel2_CD4_Tmem_cells_treated_data29.R
+
+Rscript analysis_CellCnn_PD1_panel2_CD8_Tmem_cells_treated_data23.R
+Rscript analysis_CellCnn_PD1_panel2_CD8_Tmem_cells_treated_data29.R

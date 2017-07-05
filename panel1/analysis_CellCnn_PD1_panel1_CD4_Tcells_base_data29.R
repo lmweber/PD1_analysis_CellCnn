@@ -534,6 +534,7 @@ system(paste0("cp ../../plots/", dataset, "/heatmap_marker_expression.pdf", " ",
 system(paste0("cp ../../plots/", dataset, "/MDS_plot_condition_batch.pdf", " ", SAVE_DIR))
 system(paste0("cp ../../out_CellCnn/", dataset, "/plots/selected_population_boxplot_filter*", " ", SAVE_DIR))
 system(paste0("cp ../../out_CellCnn/", dataset, "/plots/selected_population_distribution_filter*", " ", SAVE_DIR))
+system(paste0("cp -r ../../out_CellCnn/", dataset, "/selected_cells", " ", SAVE_DIR))
 
 system("rm Rplots.pdf")
 
