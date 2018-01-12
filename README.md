@@ -2,7 +2,7 @@
 
 Code to run CellCnn analyses in the following paper (collaboration project with Carsten Krieg and Malgorzata Nowicka, University of Zurich):
 
-- Krieg C. et al. *High dimensional single cell analysis predicts response to anti-PD-1 immunotherapy*, under review.
+- Krieg C. et al. (2018) *High-dimensional single-cell analysis predicts response to anti-PD-1 immunotherapy*, Nature Medicine, available at: [https://www.nature.com/articles/nm.4466](https://www.nature.com/articles/nm.4466)
 
 
 ## CellCnn
